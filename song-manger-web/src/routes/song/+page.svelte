@@ -32,6 +32,13 @@
         song.lyrics = lyrics;
         song.metaphors = metaphors;
 
+        song.singer = song.singer.trim() || 'Unknown';
+        song.lyricist = song.lyricist.trim() || 'Unknown';
+        song.composer = song.composer.trim() || 'Unknown';
+        song.album = song.album.trim() || 'Unknown';
+        song.year = song.year.trim() || 'Unknown';
+        song.genre = song.genre.trim() || 'Unknown';
+
         let errors = song.isValid()
         if (errors.length > 0) {
             alert(errors.join("\n"));
@@ -57,8 +64,6 @@
                 alert("Error adding song");
             }
         }
-
-
 
     }
 

@@ -52,11 +52,9 @@ export class Song {
         if (this.lyrics === '') {
             errors.push('Lyrics is required');
         }
-        if (this.metaphors.length === 0) {
-            errors.push('Metaphors is required');
-        }
         return errors;
     }
+
 }
 
 export class Metaphor {
