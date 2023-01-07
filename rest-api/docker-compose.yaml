@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  mongo:
+    container_name: sinhala-songs-meta-api
+    image: thilinatlm/sinhala-songs-se-rest-api
+    ports:
+      - '3000:3000'

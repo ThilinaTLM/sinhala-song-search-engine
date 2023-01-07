@@ -3,7 +3,7 @@ import type {AxiosResponse} from "axios";
 import type {Song} from "../schema/song";
 
 const client = axios.create({
-    baseURL: "http://localhost:3000/api",
+    baseURL: "http://172.104.162.39:3000/api",
 });
 
 const api = {
