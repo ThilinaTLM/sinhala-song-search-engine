@@ -21,7 +21,7 @@ export class Song {
   album: string;
 
   @Prop({ required: true })
-  year: number;
+  year: string;
 
   @Prop({ required: true })
   genre: string;
@@ -31,6 +31,15 @@ export class Song {
 
   @Prop({ required: true })
   metaphors: Metaphor[];
+
+  @Prop({ required: true })
+  trashed: boolean;
+
+  @Prop({ required: false })
+  updatedAt: Date;
+
+  @Prop({ required: false })
+  createdAt: Date;
 }
 
 export class Metaphor {
