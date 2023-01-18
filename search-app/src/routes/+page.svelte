@@ -1,61 +1,66 @@
-<script>
-	import api from "../api"
+<script lang="ts">
 	import {onMount} from "svelte";
-	import SongCard from "$lib/SongCard.svelte";
-	import Search from "$lib/Search.svelte";
-	import {queryBuilder} from "../utils/elastic";
+	import SongCard from "../lib/SongCard.svelte";
+	import Search from "../lib/Search.svelte";
+	import {QueryBuilder} from "../utils/elastic";
 	import logoSvg from "../assets/song-1.svg"
+	import type {SearchHit} from "@elastic/elasticsearch/lib/api/types";
 
 	// results
-	let songs = []
+	let hits: SearchHit[] = []
 	let pages = 1
 	let currentPage = 1
 
 	// query
-	let query = ""
-	let fields = []
+	let searchQuery = ""
+	let searchFields = []
 
-	const handleQuery = async (query) => {
-		const res = await api.search(query)
+	const processQuery = async (qb: QueryBuilder) => {
+		const res = await qb.execute()
 		if (res.ok) {
-			songs = res.data.hits
-			pages = Math.ceil(res.data.count / 20)
+			hits = res.data.hits.hits
+			// @ts-ignore
+			pages = Math.ceil(res.data.hits.total.value / QueryBuilder.PAGE_SIZE)
 			currentPage = 1
 		}
 	}
 
 	onMount(() => {
-		const q = queryBuilder({
-			query,
-			fields,
+		const q = new QueryBuilder({
+			query: searchQuery,
+			fields: searchFields,
 			page: currentPage,
 		});
-		handleQuery(q)
+		processQuery(q)
 	})
 
-	const handlePageChange = async (page) => {
-		const q = queryBuilder({
-			query,
-			fields,
+	const gotoPage = async (page) => {
+		if (page > pages || page < 1) return
+		const res = await new QueryBuilder({
+			query: searchQuery,
+			fields: searchFields,
 			page,
-		});
-		const res = await api.search(q)
+		}).execute()
 		if (res.ok) {
-			songs = res.data.hits
+			hits = res.data.hits.hits
 			currentPage = page
+			window.scrollTo({
+				top: 0,
+				behavior: "smooth"
+			})
 		}
 	}
 
 	const onSearch = ({detail}) => {
-		const q = queryBuilder({
+		const qb = new QueryBuilder({
 			query: detail.query,
 			fields: detail.fields,
 			page: 1
 		});
-		query = detail.query
-		fields = detail.fields
-		console.log("QUERY", detail, q)
-		handleQuery(q)
+		searchQuery = detail.query
+		searchFields = detail.fields
+		console.log("QUERY", qb.query())
+		processQuery(qb)
 	}
 </script>
 
@@ -77,16 +82,16 @@
 			</div>
 			<Search on:search={onSearch}/>
 			<div class="w-1/4 flex justify-end">
-				<a href="#" class="px-4">Settings</a>
+
 			</div>
 		</div>
 	</header>
 
 	<main class="flex-1 bg-white flex flex-row justify-center py-[50px]">
 		<!-- Content -->
-		<div class="grid grid-cols-4 gap-6 max-w-screen-lg">
-			{#each songs as song, i}
-				<SongCard song={song}/>
+		<div class="grid grid-cols-3 gap-5 max-w-screen-lg">
+			{#each hits as hit, i}
+				<SongCard hit={hit}/>
 			{/each}
 		</div>
 	</main>
@@ -98,8 +103,8 @@
 					<button class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300
 					 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700
 					 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white cursor-pointer"
-							on:click={() => handlePageChange(currentPage - 1)}
-							disabled={currentPage === 1}
+							on:click={() => gotoPage(currentPage - 1)}
+							disabled={currentPage === 1? 'disabled' : ''}
 					>
 						<svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
 							<path
@@ -113,8 +118,7 @@
 						<button class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300
 					hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400
 					dark:hover:bg-gray-700 dark:hover:text-white cursor-pointer"
-								on:click={() => handlePageChange(p)}
-								disabled={currentPage === p}
+								on:click={() => gotoPage(p)}
 						>
 							{p}
 						</button>
@@ -124,8 +128,7 @@
 					<button class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300
 					rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700
 					dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white cursor-pointer"
-							on:click={() => handlePageChange(currentPage + 1)}
-							disabled={currentPage === pages}
+							on:click={() => gotoPage(currentPage + 1)}
 					>
 						<svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
 							<path
@@ -159,5 +162,4 @@
 			</li>
 		</ul>
 	</footer>
-
 </div>

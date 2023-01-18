@@ -1,108 +1,149 @@
-import { MappingTypeMapping } from '@elastic/elasticsearch/lib/api/types';
+import {
+  IndicesIndexSettings,
+  MappingTypeMapping,
+} from '@elastic/elasticsearch/lib/api/types';
 import { Song } from '../schema/song.schema';
 
-export function elasticSearchMappings(): MappingTypeMapping {
-  return {
-    properties: {
-      id: {
-        type: 'keyword',
+export const settings: IndicesIndexSettings = {
+  analysis: {
+    analyzer: {
+      default: {
+        type: 'standard',
       },
-      title: {
-        type: 'text',
-        fields: {
-          keyword: {
-            type: 'keyword',
-          },
+    },
+  },
+  index: {
+    analysis: {
+      analyzer: {
+        sinhala_analyzer: {
+          type: 'custom',
+          tokenizer: 'icu_tokenizer',
+          filter: ['edgeNgram'],
+          char_filter: ['dotFilter'],
         },
       },
-      singer: {
-        type: 'text',
-        fields: {
-          keyword: {
-            type: 'keyword',
-          },
+      filter: {
+        edgeNgram: {
+          type: 'edge_ngram',
+          min_gram: 2,
+          max_gram: 50,
+          side: 'front',
         },
       },
-      lyricist: {
-        type: 'text',
-        fields: {
-          keyword: {
-            type: 'keyword',
-          },
+      char_filter: {
+        dotFilter: {
+          type: 'mapping',
+          mappings: ['\\u002E => \\u0020'],
         },
       },
-      composer: {
-        type: 'text',
-        fields: {
-          keyword: {
-            type: 'keyword',
-          },
+    },
+  },
+};
+
+export const mappings: MappingTypeMapping = {
+  properties: {
+    id: {
+      type: 'keyword',
+    },
+    title: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
         },
       },
-      album: {
-        type: 'text',
-        fields: {
-          keyword: {
-            type: 'keyword',
-          },
+    },
+    singer: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
         },
       },
-      year: {
-        type: 'text',
-        fields: {
-          keyword: {
-            type: 'keyword',
-          },
+    },
+    lyricist: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
         },
       },
-      genre: {
-        type: 'text',
-        fields: {
-          keyword: {
-            type: 'keyword',
-          },
+    },
+    composer: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
         },
       },
-      lyrics: {
-        type: 'text',
-        fields: {
-          keyword: {
-            type: 'keyword',
-          },
+    },
+    album: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
         },
       },
-      metaphors: {
-        type: 'nested',
-        properties: {
-          start: {
-            type: 'integer',
-          },
-          end: {
-            type: 'integer',
-          },
-          metaphor: {
-            type: 'text',
-            fields: {
-              keyword: {
-                type: 'keyword',
-              },
+    },
+    year: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+        },
+      },
+    },
+    genre: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+        },
+      },
+    },
+    lyrics: {
+      type: 'text',
+      analyzer: 'sinhala_analyzer',
+      search_analyzer: 'standard',
+      fields: {
+        keyword: {
+          type: 'keyword',
+        },
+      },
+    },
+    metaphors: {
+      type: 'nested',
+      properties: {
+        start: {
+          type: 'integer',
+        },
+        end: {
+          type: 'integer',
+        },
+        metaphor: {
+          type: 'text',
+          analyzer: 'standard',
+          fields: {
+            keyword: {
+              type: 'keyword',
             },
           },
-          explanation: {
-            type: 'text',
-            fields: {
-              keyword: {
-                type: 'keyword',
-              },
+        },
+        explanation: {
+          type: 'text',
+          analyzer: 'standard',
+          fields: {
+            keyword: {
+              type: 'keyword',
             },
           },
         },
       },
     },
-  };
-}
+  },
+};
 
-export function toElasticsearchIndex(song: Song) {
+export function makeIndex(song: Song) {
   return {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

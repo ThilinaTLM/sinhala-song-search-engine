@@ -16,6 +16,7 @@ services:
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
+    command: ["sh", "-c", "elasticsearch-plugin list | grep -q analysis-icu || (echo 'ICU plugin not found, installing...' && elasticsearch-plugin install analysis-icu && export ICU_PLUGIN_INSTALLED=true) && echo 'ICU plugin already installed' && exec elasticsearch"]
     ulimits:
       memlock:
         soft: -1

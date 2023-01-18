@@ -1,6 +1,7 @@
 <script lang="ts">
 
-    import { createEventDispatcher} from "svelte";
+    import {createEventDispatcher} from "svelte";
+
     const dispatch = createEventDispatcher();
 
     let options = [
@@ -8,15 +9,15 @@
         "singer",
         "composer",
         "lyricist",
-        "album",
-        "year",
         "genre",
         "lyrics",
-        "metaphors"
+        "metaphors",
+        "explanation"
     ]
 
     export let selectedOptions = ["title"];
     export let query = "";
+    export let loading = false;
 
     const isChecked = (option) => {
         return selectedOptions.includes(option);

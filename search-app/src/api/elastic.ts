@@ -1,6 +1,5 @@
 import axios from 'axios';
-import type {Hits} from "./utils";
-import {preprocess} from "./utils";
+import type {SearchResponse} from "@elastic/elasticsearch/lib/api/types";
 
 const BASE_URL = 'http://localhost:3000/api';
 
@@ -14,20 +13,20 @@ export interface Result<T = any> {
     ok: boolean;
 }
 
-export const api = {
+export const elastic = {
 
-    async search(query: any): Promise<Result<Hits>> {
+    async search(query: any): Promise<Result<SearchResponse>> {
         query = query || { query: { match_all: {} } };
         const res = await client.post(`/search`, query)
         if (res.status < 300) {
             return {
-                data: preprocess.search(res.data),
+                data: res.data,
                 error: null,
                 ok: true
             }
         } else {
             return {
-                data: null as unknown as Hits,
+                data: null as unknown as SearchResponse,
                 error: res.data,
                 ok: false
             }
@@ -36,4 +35,4 @@ export const api = {
 
 }
 
-export default api;
+export default elastic;
