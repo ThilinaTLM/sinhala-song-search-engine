@@ -1,4 +1,4 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { SongService } from '../song/song.service';
 import { elasticSearchMappings, toElasticsearchIndex } from './index.utils';
@@ -12,15 +12,12 @@ export class SearchController {
     private readonly songService: SongService,
   ) {}
 
-  @Get()
-  search() {
-    // get all songs
+  @Post()
+  search(@Body() query: any) {
     return this.elasticsearchService.search(
       {
         index: SearchController.INDEX_NAME,
-        query: {
-          match_all: {},
-        },
+        ...query,
       },
       {
         ignore: [404],
