@@ -5,15 +5,15 @@ import { Model } from 'mongoose';
 
 @Injectable()
 export class SongService {
-  constructor(@InjectModel(Song.name) private songModel: Model<SongDocument>) {
-  }
+  constructor(@InjectModel(Song.name) private songModel: Model<SongDocument>) {}
 
   async getSong(id: string): Promise<Song> {
     return this.songModel.findById(id).exec();
   }
 
   async getAllSongs(): Promise<Song[]> {
-    return this.songModel.find().exec();
+    const songs = await this.songModel.find().exec();
+    return songs.map(Song.fromObject);
   }
 
   async addSong(song: Song): Promise<Song> {

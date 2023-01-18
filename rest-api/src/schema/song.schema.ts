@@ -40,6 +40,32 @@ export class Song {
 
   @Prop({ required: false })
   createdAt: Date;
+
+  getId(): string {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return this._id;
+  }
+
+  static fromObject(obj: any) {
+    const song = new Song();
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    song._id = obj._id;
+    song.title = obj.title;
+    song.singer = obj.singer;
+    song.lyricist = obj.lyricist;
+    song.composer = obj.composer;
+    song.album = obj.album;
+    song.year = obj.year;
+    song.genre = obj.genre;
+    song.lyrics = obj.lyrics;
+    song.metaphors = obj.metaphors;
+    song.trashed = obj.trashed;
+    song.updatedAt = obj.updatedAt;
+    song.createdAt = obj.createdAt;
+    return song;
+  }
 }
 
 export class Metaphor {
