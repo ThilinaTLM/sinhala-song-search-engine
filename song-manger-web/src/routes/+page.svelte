@@ -15,7 +15,7 @@
         const searcher = new FuzzySearch(songs, ['title', 'singer', 'composer', 'lyricist'], {
             caseSensitive: false,
         });
-        return searcher.search(term);
+        return searcher.search(term).sort((a: any, b: any) => new Date(a.createdAt) < new Date(b.createdAt) ? 1 : -1);
     }
 
 
@@ -53,7 +53,7 @@
 <div class="container mx-auto px-4">
     <div class="flex justify-between items-center mt-6">
         <div class="flex items-center">
-            <h1 class="text-2xl font-bold">Songs List</h1>
+            <h1 class="text-2xl font-bold">Songs List [{filteredSongs.length}]</h1>
             <button class="btn btn-sm ml-3" on:click={onAdd}>Add Song</button>
         </div>
         <div class="flex items-center">

@@ -24,6 +24,7 @@ export class Song {
         this.lyrics = '';
         this.metaphors = [];
         this.trashed = false;
+
     }
 
     isValid(): string[] {
