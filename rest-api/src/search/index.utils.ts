@@ -27,6 +27,11 @@ export const settings: IndicesIndexSettings = {
           filter: ['edgeNgram'],
           char_filter: ['dotFilter'],
         },
+        betterFuzzy: {
+          type: 'custom',
+          tokenizer: 'standard',
+          filter: ['lowercase', 'edgeNgram'],
+        },
       },
       filter: {
         edgeNgram: {
