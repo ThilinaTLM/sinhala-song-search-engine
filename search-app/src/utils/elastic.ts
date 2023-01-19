@@ -66,21 +66,27 @@ export class QueryBuilder {
         const keywordFields = Object.keys(QueryBuilder.KEYWORD_FIELD_BOOST_SCORES)
         const fields = this.fields.filter(f => keywordFields.includes(f))
         for (const field of fields) {
-            query.bool.should.push({
-                // "fuzzy": {
-                //     [field]: {
-                //         "value": this.text,
-                //         "fuzziness": "1",
-                //         "boost": 2
-                //     }
-                // },
-                "match": {
-                    [field]: {
-                        "query": this.text,
-                        "boost": 10
+            if (this.text.trim().split(' ').length > 1) {
+                query.bool.should.push({
+                    "match": {
+                        [field]: {
+                            "query": this.text,
+                            "boost": 10
+                        }
                     }
-                }
-            })
+                })
+            } else {
+                query.bool.should.push({
+                    "fuzzy": {
+                        [field]: {
+                            "value": this.text,
+                            "fuzziness": "AUTO",
+                            "boost": 7
+                        }
+                    },
+                })
+            }
+
         }
 
         if (this.fields.includes("lyrics")) {

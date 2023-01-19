@@ -21,6 +21,12 @@ export const settings: IndicesIndexSettings = {
           filter: ['edgeNgram'],
           char_filter: ['dotFilter'],
         },
+        singlish_analyzer: {
+          type: 'custom',
+          tokenizer: 'standard',
+          filter: ['edgeNgram'],
+          char_filter: ['dotFilter'],
+        },
       },
       filter: {
         edgeNgram: {
@@ -122,7 +128,8 @@ export const mappings: MappingTypeMapping = {
         },
         metaphor: {
           type: 'text',
-          analyzer: 'standard',
+          analyzer: 'sinhala_analyzer',
+          search_analyzer: 'standard',
           fields: {
             keyword: {
               type: 'keyword',
@@ -131,7 +138,8 @@ export const mappings: MappingTypeMapping = {
         },
         explanation: {
           type: 'text',
-          analyzer: 'standard',
+          analyzer: 'sinhala_analyzer',
+          search_analyzer: 'standard',
           fields: {
             keyword: {
               type: 'keyword',

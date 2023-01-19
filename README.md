@@ -27,4 +27,50 @@ about metaphors and usage of metaphors in Sinhala Songs.
   This would be helpful to people who are composing songs.
 - Finding matching songs in terms of metaphor usage.
 
+## How to setup
+
+
+
+## Text Corpus 
+
+More than 100 sinhala songs were collected including following details about each songs,
+
+1. Title
+2. Singer
+3. Composer
+4. Lyricist
+5. Year 
+6. Album 
+7. Genre
+8. Lyrics (Sinhala Unicode)
+9. Metaphors with Explanations
+
+## Project Architecture
+
+Following component have used in this project,
+
+- MongoDB as the persistant database
+- ElasticSearch as search engine
+- NestJs(NodeJs) backend API
+    - Support adding new songs
+    - Search for songs with elasticseach queries
+- Songs search web app (Svelte)
+- Songs manager web app (Svelte)
+
+## ElasticSearch
+
+### ElasticSearch Index
+
+#### Analyzers
+
+- Standard analyzer were used to analyze the non unicode fields such as title, singer, composer, etc.
+- Custom analyzer were used to analyze the sinhala unicode fields. I used ICU tokenizer, Edge Gram filter,
+    and Char filter while defining this analyzer
+
+#### Queries
+
+- Bool Queries
+- Fuzzy Matching
+- Boost Scores
+- Nested Queris
 
