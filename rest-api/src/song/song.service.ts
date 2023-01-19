@@ -8,7 +8,9 @@ export class SongService {
   constructor(@InjectModel(Song.name) private songModel: Model<SongDocument>) {}
 
   async getSong(id: string): Promise<Song> {
-    return this.songModel.findById(id).exec();
+    const song = await this.songModel.findById(id).exec();
+    console.log('SONG', id, song);
+    return Song.fromObject(song);
   }
 
   async getAllSongs(): Promise<Song[]> {
