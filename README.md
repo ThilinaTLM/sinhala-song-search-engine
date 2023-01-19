@@ -29,7 +29,14 @@ about metaphors and usage of metaphors in Sinhala Songs.
 
 ## How to setup
 
+1. Clone the repository
+2. Use docker-compose file in rest-api project to setup the mongodb database and elasticsearch cluster
+3. Create new database in mongodb named 'songs-db' and add corpus as a new collection named 'songs'
+3. Start the backend api
+4. Call http://<host>:3000/api/search/index to create elasticsearch index
+5. Run the frontend app (search-app) using `npm run dev`
 
+> Keep note that all nodejs components are needed to setup by running `npm install` before start them.
 
 ## Text Corpus 
 
@@ -44,6 +51,19 @@ More than 100 sinhala songs were collected including following details about eac
 7. Genre
 8. Lyrics (Sinhala Unicode)
 9. Metaphors with Explanations
+
+#### Data Collection
+
+I used a web scraping script to collect basic infomation about more than 100 songs.
+Then I used song manager app that I have created to add lyrics, metaphors, and explanations to collected songs. 
+
+#### Preprocssing
+
+Preprocessing were done in the song manager app when the updated song is saved to the database,
+
+- Replaced all empty fields (singer, composer, etc.) to 'Uknown'
+- Remove trailing whitespaces and commas.
+- Remove the songs that have less metaphor usage
 
 ## Project Architecture
 
@@ -61,16 +81,19 @@ Following component have used in this project,
 
 ### ElasticSearch Index
 
-#### Analyzers
+#### Index & Analyzers
 
 - Standard analyzer were used to analyze the non unicode fields such as title, singer, composer, etc.
 - Custom analyzer were used to analyze the sinhala unicode fields. I used ICU tokenizer, Edge Gram filter,
     and Char filter while defining this analyzer
 
-#### Queries
+#### Elasticseach Queries & Features
 
 - Bool Queries
-- Fuzzy Matching
-- Boost Scores
+- Fuzzy Queries
+- Match Queries
 - Nested Queris
+
+- Boost Scores
+- Inner Hits
 
